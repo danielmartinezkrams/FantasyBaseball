@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <title>Fantasy Baseball</title>
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="js/script.js"></script>
     <link rel="stylesheet" href="css/stylesheet.css">
 </head>
 <body>
-
-<label for="name"> Enter Player's Last Name </label><br>
-<input type='text' id='name' onclick="nameChange()" value="Enter Last Name Here">
-<button>Submit</button>
+<h1>Baseball Database</h1>
+<label for="name"></label><br>
+<input type='text' id='name' placeholder="Enter Last Name Here">
+<button id="submit" class="btn btn-primary">Submit</button>
 <div id="output">
-    <table border="1" cellspacing="4" cellpadding="3" id="pitch">
+    <table class="table table-hover" id="pitch">
         <tr>
             <th>Year</th>
             <th>Team</th>
@@ -23,13 +25,15 @@
             <th>Opp BA</th>
         </tr>
     </table>
-    <table border="1" cellspacing="4" cellpadding="3" id="bat">
+    <table class="table table-hover" id="bat">
         <tr>
             <th>Year</th>
             <th>Team</th>
             <th>G</th>
+            <th>R</th>
             <th>H</th>
             <th>AB</th>
+            <th>HR</th>
             <th>BA</th>
         </tr>
     </table>
