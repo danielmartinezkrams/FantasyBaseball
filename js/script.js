@@ -2,9 +2,46 @@
  * Created by h205p2 on 2/6/17.
  */
 $(document).ready(function(){
-    $('name').hover(function(){
-        $(this).remove();
+    $(function() {
+        var availableTags = [
+            "ActionScript",
+            "AppleScript",
+            "Asp",
+            "BASIC",
+            "C",
+            "C++",
+            "Clojure",
+            "COBOL",
+            "ColdFusion",
+            "Erlang",
+            "Fortran",
+            "Groovy",
+            "Haskell",
+            "Java",
+            "JavaScript",
+            "Lisp",
+            "Perl",
+            "PHP",
+            "Python",
+            "Ruby",
+            "Scala",
+            "Scheme",
+
+            $.getJSON("Database/master.json", function(result){
+
+                //iterate over items in master
+                $.each(result, function (key, value) {
+                })
+            })
+
+        ];
+        $("#name").autocomplete({
+            source: availableTags
+        });
     });
+
+
+
     $("#submit").click(function(){
         $('output').empty();
         $.getJSON("Database/master.json", function(result){
