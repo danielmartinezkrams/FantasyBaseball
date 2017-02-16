@@ -1,57 +1,32 @@
 /**
  * Created by h205p2 on 2/6/17.
  */
+function createArray(){
+    var array = [];
+    $.getJSON("Database/master.json", function(result){
+        $.each(result, function (key, value) {
+            array[key] = (value.nameLast + ", " + value.NameFirst);
+        })
+    });
+    return array
+}
 $(document).ready(function(){
     $(function() {
-        var availableTags = [
-            "ActionScript",
-            "AppleScript",
-            "Asp",
-            "BASIC",
-            "C",
-            "C++",
-            "Clojure",
-            "COBOL",
-            "ColdFusion",
-            "Erlang",
-            "Fortran",
-            "Groovy",
-            "Haskell",
-            "Java",
-            "JavaScript",
-            "Lisp",
-            "Perl",
-            "PHP",
-            "Python",
-            "Ruby",
-            "Scala",
-            "Scheme",
-
-            $.getJSON("Database/master.json", function(result){
-
-                //iterate over items in master
-                $.each(result, function (key, value) {
-                })
-            })
-
-        ];
+        var availableTags = createArray();
         $("#name").autocomplete({
             source: availableTags
         });
     });
 
 
-
     $("#submit").click(function(){
-        $('output').empty();
+        $('#output').css("display", "block");
         $.getJSON("Database/master.json", function(result){
-
             //iterate over items in master
             $.each(result, function (key, value) {
-
                 //if last name matches
-                if($("#name").val() == value.nameLast) {
-                    $("#output").prepend(value.NameFirst + " " + value.nameLast + " ");
+                if ($("#name").val() == (value.nameLast + ", " + value.NameFirst)) {
+                    //$("#output").prepend(value.NameFirst + " " + value.nameLast);
                     //iterate over items in pitching
                     $.getJSON("Database/pitching.json", function(pResult) {
                         $.each(pResult, function (pKey, pValue) {
@@ -61,7 +36,6 @@ $(document).ready(function(){
                         });
                     });
                     //end pitching iterate
-
                     //$("#output").append("Batting Data" + "<br>");
                     $.getJSON("Database/batting.json", function(bResult){
                         $.each(bResult, function (bKey, bValue) {
