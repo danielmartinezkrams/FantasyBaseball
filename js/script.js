@@ -17,7 +17,9 @@ $(document).ready(function(){
             source: availableTags
         });
     });
-
+    $("#filter").click(function() {
+        $('#statInput').toggle();
+    });
 
     $("#submit").click(function(){
         $('#output').css("display", "block");

@@ -1,9 +1,15 @@
 body{
     text-align: center;
 }
+#statInput{
+    text-align: center;
+    display:none;
+}
 #output{
-    display:none
+    display:none;
+    text-align: left
 }
 #ui-id-1{
-
+    text-align: left;
+    width: 50px;
 }

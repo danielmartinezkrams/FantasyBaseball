@@ -3,21 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <title>Fantasy Baseball</title>
-    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="js/script.js"></script>
     <link rel="stylesheet" href="css/stylesheet.css">
 </head>
 <body>
 <h1>Baseball Database</h1>
-<label for="name"></label><br>
-<input type='text' id='name' placeholder="Enter Last Name Here">
-<button id="submit" class="btn btn-primary">Submit</button>
-<div id="nameOutput">
 
+
+<div class="ui-widget">
+    <label for="name">Name: </label>
+    <input type='text' id='name' placeholder="Enter Last Name Here">
+
+</div>
+
+<button id="submit" class="btn btn-primary">Submit</button><button id="filter" class="btn btn-info">Filter</button>
+<div id="statInput">
+    <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-primary active">
+            <input type="checkbox" autocomplete="off" checked> W
+        </label>
+        <label class="btn btn-primary active">
+            <input type="checkbox" autocomplete="off" checked> L
+        </label>
+        <label class="btn btn-primary active">
+            <input type="checkbox" autocomplete="off" checked> ERA
+        </label>
+        <label class="btn btn-primary active">
+            <input type="checkbox" autocomplete="off" checked> SO
+        </label>
+        <label class="btn btn-primary active">
+            <input type="checkbox" autocomplete="off" checked> BAOpp
+        </label>
+        <label class="btn btn-primary active">
+            <input type="checkbox" autocomplete="off" checked> SO
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> G
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off" > GS
+        </label>
+        <br>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> CG
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> SHO
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off" > SV
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> IPouts
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> H
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> ER
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> BB
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> IBB
+        </label>
+        <br>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> WP
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> HBP
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> BK
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> BFP
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> GF
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> R
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> SH
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> SF
+        </label>
+        <label class="btn btn-primary">
+            <input type="checkbox" autocomplete="off"> GIDP
+        </label>
+    </div>
+    <div>
+
+    </div>
 </div>
 <div id="output">
     <table class="table table-hover" id="pitch">
