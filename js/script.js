@@ -17,12 +17,20 @@ $(document).ready(function(){
             source: availableTags
         });
     });
-    $("#filter").click(function() {
-        $('#statInput').toggle();
+    $("#pitcherFilter").click(function(){
+        $('#pitcherStats').toggle();
     });
-
+    $("#batterFilter").click(function(){
+        $('#batterStats').toggle();
+    });
+    console.log(document.getElementById("W").checked);
+    if(document.getElementById("W").checked){
+        var W = true;
+        console.log(W);
+    }
+    console.log(W);
     $("#submit").click(function(){
-        $('#output').css("display", "block");
+        $('#output').toggle();
         $.getJSON("Database/master.json", function(result){
             //iterate over items in master
             $.each(result, function (key, value) {
