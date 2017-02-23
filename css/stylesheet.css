@@ -1,14 +1,7 @@
 body{
     text-align: center;
 }
-#pitcherStats{
-    text-align: center;
-    display:none;
-}
-#batterStats{
-    text-align: center;
-    display:none;
-}
+
 #output{
     display:none;
     text-align: left
@@ -16,7 +9,4 @@ body{
 #ui-id-1{
     text-align: left;
     width: 50px;
-}
-.btn-group{
-    width: 500px;
 }
