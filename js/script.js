@@ -1,8 +1,33 @@
 /**
  * Created by h205p2 on 2/6/17.
  */
-
-
+var W = false;
+var L = false;
+var G = false;
+var GS = false;
+var  CG= false;
+var  SHO = false;
+var SV = false;
+var IPOuts = false;
+var H = false;
+var ER = false;
+var HR = false;
+var BB = false;
+var SO = false;
+var BAOpp = false;
+var ERA = false;
+var IBB = false;
+var WP = false;
+var HBP = false;
+var BK = false;
+var BFP = false;
+var GF = false;
+var R = false;
+var SH = false;
+var SF = false;
+var GIDP = false;
+pitcherStatsArray = [W, L, G, GS, CG, SHO, SV, IPOuts, H, ER, HR, BB, SO, BAOpp, ERA, IBB, WP, HBP, BK, BFP, GF, R, SH, SF, GIDP];
+pitcherArray = ["W", "L", "G", "GS", "CG", "SHO", "SV", "IPOuts", "H", "ER", "HR", "BB", "SO", "BAOpp", "ERA", "IBB", "WP", "HBP", "BK", "BFP", "GF", "R", "SH", "SF", "GIDP"];
 function createArray(){
     var array = [];
     $.getJSON("Database/master.json", function(result){
@@ -21,13 +46,16 @@ $(document).ready(function(){
     });
     $("#pitcherFilter").click(function(){
         $('#filter').html(pitcherStats);
-        filterArray = [];
-        if(document.getElementById("W").checked){
-            var W = true;
-            console.log(W);
-            filterArray.push(W);
+        for(var j = 0; j < pitcherArray.length; j++){
+            console.log(pitcherArray[j]);
+            if(document.getElementById(pitcherArray[j]).checked){
+                console.log("hi");
+                pitcherStatsArray[j] = true;
+            }
         }
+        console.log(pitcherStatsArray);
     });
+
     $("#batterFilter").click(function(){
         $('#filter').html(batterStats)
     });
@@ -43,14 +71,23 @@ $(document).ready(function(){
                     $.getJSON("Database/pitching.json", function(pResult) {
                         $.each(pResult, function (pKey, pValue) {
                             if(value.playerID == pValue.playerID) {
-                                console.log("fa=" + filterArray[0]);
-                                console.log(filterArray.length);
-                                for(var i = 0; i < filterArray.length; i++){
-                                    console.log(i);
-                                    $("#pitch").append("<tr><th>" + filterArray[i] + "</th> <th>Team</th> <th>ERA</th> <th>W</th> <th>L</th> <th>Opp BA</th></tr><tr><td>" + pValue.filterArray[i] + "</td><td>" + pValue.teamID + "</td><td>" + pValue.ERA + "</td><td>" + pValue.W + "</td><td>" + pValue.L + "</td><td>" + pValue.BAOpp + "</td></tr>");
+                                var pitchHeader = "";
+                                var pitchDisplay = ("<tr>" + pitchHeader + "</tr>");
+                                var pitchRow = ("<tr></tr>");
+                                console.log(pitcherStatsArray.length);
+                                for(var i = 0; i < pitcherStatsArray.length; i++){
+                                    pitchBody += ("<td></td>");
+                                    if(pitcherStatsArray[i]){
+                                        console.log(i);
+                                        console.log(pitcherStatsArray[i]);
+
+                                            //<th>Team</th> <th>ERA</th> <th>W</th> <th>L</th> <th>Opp BA</th></tr><tr><td>" + pValue + "</td><td>" + pValue.teamID + "</td><td>" + pValue.ERA + "</td><td>" + pValue.W + "</td><td>" + pValue.L + "</td><td>" + pValue.BAOpp + "</td></tr>");
+                                    }
+
                                 }
                             }
                         });
+                        $("#pitch").append(pitchDisplay)
                     });
                     //end pitching iterate
                     //$("#output").append("Batting Data" + "<br>");
@@ -64,12 +101,9 @@ $(document).ready(function(){
                 }
             });
         });
+
     });
 });
-
-function checkFilter(){
-
-}
 
 
 pitcherStats = "<div id='pitcherStats'><div class='btn-group' data-toggle='buttons'><label class='btn btn-primary active'><input id='W' type='checkbox' autocomplete='off' checked> W </label> <label class='btn btn-primary active'> <input id='L' type='checkbox' autocomplete='off' checked> L </label> <label class='btn btn-primary active'> <input id='ERA' type='checkbox' autocomplete='off' checked> ERA </label> <label class='btn btn-primary active'> <input id='SO' type='checkbox' autocomplete='off' checked> SO </label> <label class='btn btn-primary active'> <input id='BAOpp' type='checkbox' autocomplete='off' checked> BAOpp </label> <label class='btn btn-primary active'> <input id='G' type='checkbox' autocomplete='off' checked> G </label> <label class='btn btn-primary'> <input id='HR' type='checkbox' autocomplete='off' > HR </label> <label class='btn btn-primary'> <input id='GS' type='checkbox' autocomplete='off' > GS </label> <br> <label class='btn btn-primary'> <input id='CG' type='checkbox' autocomplete='off'> CG </label> <label class='btn btn-primary'> <input id='SHO' type='checkbox' autocomplete='off'> SHO </label> <label class='btn btn-primary'> <input id='SV' type='checkbox' autocomplete='off' > SV </label> <label class='btn btn-primary'> <input id='IPOuts' type='checkbox' autocomplete='off'> IPOuts </label> <label class='btn btn-primary'> <input id='H' type='checkbox' autocomplete='off'> H </label> <label class='btn btn-primary'> <input id='ER' type='checkbox' autocomplete='off'> ER </label> <label class='btn btn-primary'> <input id='BB' type='checkbox' autocomplete='off'> BB </label> <label class='btn btn-primary'> <input id='IBB' type='checkbox' autocomplete='off'> IBB </label> <br> <label class='btn btn-primary'> <input id='WP' type='checkbox' autocomplete='off'> WP </label> <label class='btn btn-primary'> <input id='HBP' type='checkbox' autocomplete='off'> HBP </label> <label class='btn btn-primary'> <input id='BK' type='checkbox' autocomplete='off'> BK </label> <label class='btn btn-primary'> <input id='BFP' type='checkbox' autocomplete='off'> BFP </label> <label class='btn btn-primary'> <input id='GF' type='checkbox' autocomplete='off'> GF </label> <label class='btn btn-primary'> <input id='R' type='checkbox' autocomplete='off'> R </label> <label class='btn btn-primary'> <input id='SH' type='checkbox' autocomplete='off'> SH </label> <label class='btn btn-primary'> <input id='SF' type='checkbox' autocomplete='off'> SF </label> <label class='btn btn-primary'> <input id='GIDP' type='checkbox' autocomplete='off'> GIDP </label> </div> </div>"
