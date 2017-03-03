@@ -49,15 +49,6 @@ var BAb = true;
 batterStatsArray = [Gb, ABb, Rb, Hb, Double, Triple, HRb, RBIb, SBb, CSb, BBb, SOb, IBBb, HBPb, SHb, SFb, GIDPb, BAb];
 batterArray = ["Gb", "ABb", "Rb", "Hb", "Double", "Triple", "HRb", "RBIb", "SBb", "CSb", "BBb", "SOb", "IBBb", "HBPb", "SHb", "SFb", "GIDPb", "BAb"];
 batterArray2 = ["G", "AB", "R", "H", "2B", "3B", "HR", "RBI", "SB", "CS", "BB", "SO", "IBB", "HBP", "SH", "SF", "GIDP", "BA"];
-function createArray(){
-    var array = [];
-    $.getJSON("Database/master.json", function(result){
-        $.each(result, function (key, value) {
-            array[key] = (value.nameLast + ", " + value.NameFirst);
-        })
-    });
-    return array
-}
 function pitchFilterCheck(){
     for(var j = 0; j < pitcherArray.length; j++){
         if(document.getElementById(pitcherArray[j]).checked){
@@ -72,12 +63,21 @@ function batFilterCheck(){
         }
     }
 }
+function makeTotalArray(place, pResult, pKey){
+    console.log(place);
+    console.log
+    console.log((pResult[pKey])[place]);
+}
 $(document).ready(function(){
-    //$('#filter').html(pitcherStats);
+    var array = [];
+    $.getJSON("Database/master.json", function(result){
+        $.each(result, function (key, value) {
+            array[key] = (value.nameLast + ", " + value.NameFirst);
+        })
+    });
     $(function() {
-        var availableTags = createArray();
         $("#name").autocomplete({
-            source: availableTags
+            source: array
         });
     });
     $("#pitcherFilter").click(function(){
@@ -89,12 +89,12 @@ $(document).ready(function(){
         $("#pitchFilter").hide();
         $('#batFilter').toggle()
     });
-
     $("#submit").click(function(){
         $("#pitchFilter").hide();
         $("#batFilter").hide();
         $("#pitch").empty();
         $("#bat").empty();
+
         var pitchHeader = "";
         for(var i = 0; i < pitcherStatsArray.length; i++){
             if(pitcherStatsArray[i]){
@@ -103,6 +103,7 @@ $(document).ready(function(){
             }
         }
         var pitchDisplay = ("<tr><th>Year</th><th>Team</th>" + pitchHeader + "</tr>");
+
         var batHeader = "";
         for(var n = 0; n < batterStatsArray.length; n++){
             if(batterStatsArray[n]){
@@ -111,6 +112,7 @@ $(document).ready(function(){
             }
         }
         var batDisplay = ("<tr><th>Year</th><th>Team</th>" + batHeader + "</tr>");
+
         $("#pitch").append(pitchDisplay);
         $("#bat").append(batDisplay);
         $('#output').toggle();
@@ -123,13 +125,21 @@ $(document).ready(function(){
                     //iterate over items in pitching
                     $.getJSON("Database/pitching.json", function(pResult) {
                         $.each(pResult, function (pKey, pValue) {
+
                             if(value.playerID == pValue.playerID) {
                                 //<th>Team</th> <th>ERA</th> <th>W</th> <th>L</th> <th>Opp BA</th></tr><tr><td>" + pValue + "</td><td>" + pValue.teamID + "</td><td>" + pValue.ERA + "</td><td>" + pValue.W + "</td><td>" + pValue.L + "</td><td>" + pValue.BAOpp + "</td></tr>");
                                 var pitcherBody = ("<td>" + pValue.yearID + "</td><td>" + pValue.teamID + "</td>");
                                 for(var k = 0; k < pitcherStatsArray.length; k++){
                                     if(pitcherStatsArray[k]){
                                         var place = pitcherArray[k];
-                                        pitcherBody += ("<td>" + pValue[place] + "</td>");
+                                        var totalArray = makeTotalArray(place, pValue, pKey);
+
+                                        //pValue[place]
+                                        if(1 == 3) {
+                                            pitcherBody += ("<td class='highlight'>" + pValue[place] + "</td>");
+                                        } else {
+                                            pitcherBody += ("<td>" + pValue[place] + "</td>");
+                                        }
                                     }
                                 }
                                 var pitchRow = ("<tr>" + pitcherBody + "</tr>");

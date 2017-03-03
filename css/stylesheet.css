@@ -16,3 +16,12 @@ body{
 #batFilter{
     display: none;
 }
+.nav-tabs{
+    float: none;
+}
+.active{
+    padding: 5px;
+}
+.highlight{
+    background: yellow;
+}
