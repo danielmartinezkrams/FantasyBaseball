@@ -20,7 +20,7 @@ body{
     float: none;
 }
 .active{
-    padding: 5px;
+    padding: 10px;
 }
 .highlight{
     background: yellow;

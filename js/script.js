@@ -63,10 +63,41 @@ function batFilterCheck(){
         }
     }
 }
-function makeTotalArray(place, pResult, pKey){
-    console.log(place);
-    console.log
-    console.log((pResult[pKey])[place]);
+
+function myFunc(place, year)  {
+    var counter = [];
+    $.getJSON("Database/pitching.json", function (pResult) {
+        $.each(pResult, function (pKey, pValue) {
+            if (year == pValue.yearID) {
+                //console.log((pResult[pKey]));
+                //console.log((pResult[pKey])[place]);
+                //console.log(parseInt((pResult[pKey])[place]));
+                counter.push(pValue.playerID + " " + pValue.yearID + " " + place + " " + parseInt((pResult[pKey])[place]));
+                counter.sort(function (a, b) {return a - b});
+                //console.log(currentCounter.length);
+            }
+
+        });
+        //console.log(currentCounter);
+        //console.log(currentCounter.length);
+        //console.log(currentCounter/(currentCounter.length));
+        //return currentCounter/(currentCounter.length);
+        //myFunc(currentCounter);
+    });
+    return counter;
+}
+
+function getJSON(year) {
+    var currentCounter = [];
+    for(var o = 0; o < pitcherStatsArray.length; o++) {
+        if (pitcherStatsArray[o]) {
+            var place = pitcherArray[o];
+            currentCounter[place] = myFunc(place, year);
+        }
+    }
+
+    //console.log(currentCounter);
+    return currentCounter;
 }
 $(document).ready(function(){
     var array = [];
@@ -127,15 +158,21 @@ $(document).ready(function(){
                         $.each(pResult, function (pKey, pValue) {
 
                             if(value.playerID == pValue.playerID) {
+                                var statsInOrder = getJSON(pValue.yearID);
+                                console.log(statsInOrder);
+                                console.log(statsInOrder.length);
                                 //<th>Team</th> <th>ERA</th> <th>W</th> <th>L</th> <th>Opp BA</th></tr><tr><td>" + pValue + "</td><td>" + pValue.teamID + "</td><td>" + pValue.ERA + "</td><td>" + pValue.W + "</td><td>" + pValue.L + "</td><td>" + pValue.BAOpp + "</td></tr>");
                                 var pitcherBody = ("<td>" + pValue.yearID + "</td><td>" + pValue.teamID + "</td>");
                                 for(var k = 0; k < pitcherStatsArray.length; k++){
                                     if(pitcherStatsArray[k]){
                                         var place = pitcherArray[k];
-                                        var totalArray = makeTotalArray(place, pValue, pKey);
-
+                                        
                                         //pValue[place]
-                                        if(1 == 3) {
+                                        //console.log(statsInOrder.length);
+                                        //console.log(0.95*statsInOrder.length);
+                                        //console.log(statsInOrder[0.95*statsInOrder.length]);
+                                        if(pValue[place] > statsInOrder[0.95*statsInOrder.length]) {
+                                            console.log("wow");
                                             pitcherBody += ("<td class='highlight'>" + pValue[place] + "</td>");
                                         } else {
                                             pitcherBody += ("<td>" + pValue[place] + "</td>");
