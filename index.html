@@ -17,22 +17,15 @@
 
 <div class="ui-widget">
     <label for="name">Name: </label>
-    <input type='text' id='name' placeholder="Enter Last Name Here">
+    <input type='text' id='name' placeholder="Enter Last Name Here" value="">
 
 </div>
 
 
 <ul class="nav nav-tabs">
     <button id="submit" class="btn btn-primary">Submit</button>
-    <li role="presentation" class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            Filter <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <button id="pitcherFilter" class="btn btn-info">Pitcher Stats</button>
-            <button id="batterFilter" class="btn btn-warning">Batter Stats</button>
-        </ul>
-    </li>
+    <button id="pitcherFilter" class="btn btn-info">Pitcher Stats</button>
+    <button id="batterFilter" class="btn btn-warning">Batter Stats</button>
 </ul>
 <div id="filter">
     <div id="pitchFilter" onclick="pitchFilterCheck()">
@@ -47,10 +40,12 @@
 
 
 <div id="output">
+
     <table class="table table-hover" id="pitch">
     </table>
     <table class="table table-hover" id="bat">
     </table>
+    <div id="yellow" class="key">Top 10%</div><div id="orange" class="key">Top 5%</div><div id="red" class="key">MLB Best</div>
 </div>
 
 

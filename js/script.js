@@ -64,41 +64,6 @@ function batFilterCheck(){
     }
 }
 
-function myFunc(place, year)  {
-    var counter = [];
-    $.getJSON("Database/pitching.json", function (pResult) {
-        $.each(pResult, function (pKey, pValue) {
-            if (year == pValue.yearID) {
-                //console.log((pResult[pKey]));
-                //console.log((pResult[pKey])[place]);
-                //console.log(parseInt((pResult[pKey])[place]));
-                counter.push(pValue.playerID + " " + pValue.yearID + " " + place + " " + parseInt((pResult[pKey])[place]));
-                counter.sort(function (a, b) {return a - b});
-                //console.log(currentCounter.length);
-            }
-
-        });
-        //console.log(currentCounter);
-        //console.log(currentCounter.length);
-        //console.log(currentCounter/(currentCounter.length));
-        //return currentCounter/(currentCounter.length);
-        //myFunc(currentCounter);
-    });
-    return counter;
-}
-
-function getJSON(year) {
-    var currentCounter = [];
-    for(var o = 0; o < pitcherStatsArray.length; o++) {
-        if (pitcherStatsArray[o]) {
-            var place = pitcherArray[o];
-            currentCounter[place] = myFunc(place, year);
-        }
-    }
-
-    //console.log(currentCounter);
-    return currentCounter;
-}
 $(document).ready(function(){
     var array = [];
     $.getJSON("Database/master.json", function(result){
@@ -121,10 +86,14 @@ $(document).ready(function(){
         $('#batFilter').toggle()
     });
     $("#submit").click(function(){
+        var $output = $('#output');
         $("#pitchFilter").hide();
         $("#batFilter").hide();
-        $("#pitch").empty();
-        $("#bat").empty();
+        var $pitch = $("#pitch");
+        $pitch.empty();
+
+        var $bat = $("#bat");
+        $bat.empty();
 
         var pitchHeader = "";
         for(var i = 0; i < pitcherStatsArray.length; i++){
@@ -144,48 +113,96 @@ $(document).ready(function(){
         }
         var batDisplay = ("<tr><th>Year</th><th>Team</th>" + batHeader + "</tr>");
 
-        $("#pitch").append(pitchDisplay);
-        $("#bat").append(batDisplay);
-        $('#output').toggle();
+        $pitch.append(pitchDisplay);
+        $bat.append(batDisplay);
+        $pitch.append("<div class='loader'></div>");
+        $bat.append("<div class='loader'></div>");
+
+        $output.toggle();
         $.getJSON("Database/master.json", function(result){
             //iterate over items in master
             $.each(result, function (key, value) {
                 //if last name matches
                 if ($("#name").val() == (value.nameLast + ", " + value.NameFirst)) {
-                    //$("#output").prepend(value.NameFirst + " " + value.nameLast);
+                    $output.prepend(value.NameFirst + " " + value.nameLast);
                     //iterate over items in pitching
                     $.getJSON("Database/pitching.json", function(pResult) {
                         $.each(pResult, function (pKey, pValue) {
 
                             if(value.playerID == pValue.playerID) {
-                                var statsInOrder = getJSON(pValue.yearID);
-                                console.log(statsInOrder);
-                                console.log(statsInOrder.length);
-                                //<th>Team</th> <th>ERA</th> <th>W</th> <th>L</th> <th>Opp BA</th></tr><tr><td>" + pValue + "</td><td>" + pValue.teamID + "</td><td>" + pValue.ERA + "</td><td>" + pValue.W + "</td><td>" + pValue.L + "</td><td>" + pValue.BAOpp + "</td></tr>");
                                 var pitcherBody = ("<td>" + pValue.yearID + "</td><td>" + pValue.teamID + "</td>");
                                 for(var k = 0; k < pitcherStatsArray.length; k++){
                                     if(pitcherStatsArray[k]){
+
                                         var place = pitcherArray[k];
-                                        
-                                        //pValue[place]
-                                        //console.log(statsInOrder.length);
-                                        //console.log(0.95*statsInOrder.length);
-                                        //console.log(statsInOrder[0.95*statsInOrder.length]);
-                                        if(pValue[place] > statsInOrder[0.95*statsInOrder.length]) {
-                                            console.log("wow");
-                                            pitcherBody += ("<td class='highlight'>" + pValue[place] + "</td>");
-                                        } else {
-                                            pitcherBody += ("<td>" + pValue[place] + "</td>");
+                                        //console.log("current stat: " + place);
+                                        var counter = [];
+                                        for(var q = 0; q < pResult.length; q++){
+                                            //console.log(pResult[q].yearID);
+                                            if (pResult[q].yearID == pValue.yearID) {
+                                                counter.push(Number((pResult[q])[place]));
+                                                counter.sort(function (a, b) {
+                                                    return a - b
+                                                });
+                                            }
+                                        }
+
+
+
+                                        if(place == "ER" || place =="HR"|| place == "BB" || place =="BAOpp" || place =="ERA" || place =="IBB" || place =="HBP" || place =="BK"){
+                                            /*console.log("array: " + counter);
+                                            console.log("player value: " + pValue[place]);
+                                            console.log("90th percent: " +Math.round(0.1*(counter.length)));
+                                            console.log("90th percentile: "+counter[Math.round(0.1*(counter.length))]);
+                                            */
+                                            //console.log(counter[0]);
+                                            if(pValue[place] == counter[0]) {
+                                                //console.log("player number 1 " + "player value: " + pValue[place] + " Number 1: "+counter[0]);
+                                                pitcherBody += ("<td class='highlightRed'>" + pValue[place] + "</td>");
+                                            }
+                                            else if(pValue[place] < counter[Math.round(0.05*(counter.length))]) {
+                                                //console.log("player above 95th percentile " + "player value: " + pValue[place] + " 95th percentile: "+counter[Math.round(0.05*(counter.length))]);
+                                                pitcherBody += ("<td class='highlightOrange'>" + pValue[place] + "</td>");
+                                            }
+                                            else if(pValue[place] < counter[Math.round(0.1*(counter.length))]) {
+                                                //console.log("player above 90th percentile " + "player value: " + pValue[place] + " 90th percentile: "+counter[Math.round(0.1*(counter.length))]);
+                                                pitcherBody += ("<td class='highlightYellow'>" + pValue[place] + "</td>");
+                                            }
+                                            else {
+                                                pitcherBody += ("<td>" + pValue[place] + "</td>");
+                                            }
+                                        }
+                                        else{
+                                            /*console.log("array: " + counter);
+                                            console.log("player value: " + pValue[place]);
+                                            console.log("90th percent: " +Math.round(0.9*(counter.length)));
+                                            console.log("90th percentile: "+counter[Math.round(0.9*(counter.length))]);
+                                            */
+                                            //console.log("first place: " + counter[counter.length - 1]);
+                                            if(pValue[place] == counter[counter.length - 1]) {
+                                                //console.log("player number 1 " + "player value: " + pValue[place] + " Number 1: "+counter[counter.length -1]);
+                                                pitcherBody += ("<td class='highlightRed'>" + pValue[place] + "</td>");
+                                            }
+                                            else if(pValue[place] > counter[Math.round(0.95*(counter.length))]) {
+                                                //console.log("player above 95th percentile " + "player value: " + pValue[place] + " 95th percentile: "+counter[Math.round(0.95*(counter.length))]);
+                                                pitcherBody += ("<td class='highlightOrange'>" + pValue[place] + "</td>");
+                                            }
+                                            else if(pValue[place] > counter[Math.round(0.9*(counter.length))]) {
+                                                //console.log("player above 90th percentile " + "player value: " + pValue[place] + " 90th percentile: "+counter[Math.round(0.9*(counter.length))]);
+                                                pitcherBody += ("<td class='highlight'>" + pValue[place] + "</td>");
+                                            }
+                                            else {
+                                                pitcherBody += ("<td>" + pValue[place] + "</td>");
+                                            }
                                         }
                                     }
                                 }
                                 var pitchRow = ("<tr>" + pitcherBody + "</tr>");
-                                $("#pitch").append(pitchRow);
+                                $pitch.append(pitchRow);
                             }
                         });
                     });
                     //end pitching iterate
-                    //$("#output").append("Batting Data" + "<br>");
                     $.getJSON("Database/batting.json", function(bResult){
                         $.each(bResult, function (bKey, bValue) {
                             if(value.playerID == bValue.playerID) {
@@ -193,31 +210,74 @@ $(document).ready(function(){
                                 for(var m = 0; m < batterStatsArray.length; m++){
                                     if(batterStatsArray[m]){
                                         var holder = batterArray2[m];
-                                        if(holder == "BA"){
+                                        //console.log("current stat: " + holder);
+                                        var counter = [];
+                                        for(var w = 0; w < bResult.length; w++){
+                                            if (bResult[w].yearID == bValue.yearID) {
+                                                counter.push(Number((bResult[w])[holder]));
+                                                counter.sort(function (a, b) {
+                                                    return (a - b)
+                                                });
+                                            }
+                                        }
+
+
+                                        if(holder == "CS" || holder =="SO"){
+                                            if(bValue[holder] == counter[0]) {
+                                                //console.log("player number 1 " + "player value: " + bValue[holder] + " Number 1: "+counter[0]);
+                                                batterBody += ("<td class='highlightRed'>" + bValue[holder] + "</td>");
+                                            }
+                                            else if(bValue[holder] < counter[Math.round(0.05*(counter.length))]) {
+                                                //console.log("player above 95th percentile " + "player value: " + bValue[holder] + " 95th percentile: "+counter[Math.round(0.05*(counter.length))]);
+                                                batterBody += ("<td class='highlightOrange'>" + bValue[holder] + "</td>");
+                                            }
+                                            else if(bValue[holder] < counter[Math.round(0.1*(counter.length))]) {
+                                                //console.log("player above 90th percentile " + "player value: " + bValue[holder] + " 90th percentile: "+counter[Math.round(0.1*(counter.length))]);
+                                               batterBody += ("<td class='highlightYellow'>" + bValue[holder] + "</td>");
+                                            }
+                                            else {
+                                                batterBody += ("<td>" + bValue[holder] + "</td>");
+                                            }
+                                        }
+                                        else if(holder == "BA"){
                                             batterBody += ("<td>" + (Math.round(((bValue.H)/(bValue.AB)) * 1000) / 1000) + "</td>");
                                         }
                                         else{
-                                            batterBody += ("<td>" + bValue[holder] + "</td>");
+                                            if(bValue[holder] == counter[counter.length - 1]) {
+                                                //console.log("player number 1 " + "player value: " + bValue[holder] + " Number 1: "+counter[counter.length - 1]);
+                                                batterBody += ("<td class='highlightRed'>" + bValue[holder] + "</td>");
+                                            }
+                                            else if(bValue[holder] > counter[Math.round(0.95*(counter.length))]) {
+                                                //console.log("player above 95th percentile " + "player value: " + bValue[holder] + " 95th percentile: "+counter[Math.round(0.95*(counter.length))]);
+                                                batterBody += ("<td class='highlightOrange'>" + bValue[holder] + "</td>");
+                                            }
+                                            else if(bValue[holder] > counter[Math.round(0.9*(counter.length))]) {
+                                                //console.log("player above 90th percentile");
+                                                batterBody += ("<td class='highlight'>" + bValue[holder] + "</td>");
+                                            }
+                                            else {
+                                                batterBody += ("<td>" + bValue[holder] + "</td>");
+                                            }
                                         }
                                     }
 
                                 }
                                 var batRow = ("<tr>" + batterBody + "</tr>");
-                                $("#bat").append(batRow);
+                                $bat.append(batRow);
                                 //(Math.round(((bValue.H)/(bValue.AB))
                             }
                         });
                     });
+                    $(".loader").hide()
                 }
             });
         });
 
     });
+
 });
 
 
-//pitcherStats = "<div id='pitcherStats'><div class='btn-group' data-toggle='buttons'><label class='btn btn-primary active'><input id='W' type='checkbox' autocomplete='off' checked> W </label> <label class='btn btn-primary active'> <input id='L' type='checkbox' autocomplete='off' checked> L </label> <label class='btn btn-primary active'> <input id='ERA' type='checkbox' autocomplete='off' checked> ERA </label> <label class='btn btn-primary active'> <input id='SO' type='checkbox' autocomplete='off' checked> SO </label> <label class='btn btn-primary active'> <input id='BAOpp' type='checkbox' autocomplete='off' checked> BAOpp </label> <label class='btn btn-primary active'> <input id='G' type='checkbox' autocomplete='off' checked> G </label> <label class='btn btn-primary'> <input id='HR' type='checkbox' autocomplete='off' > HR </label> <label class='btn btn-primary'> <input id='GS' type='checkbox' autocomplete='off' > GS </label> <br> <label class='btn btn-primary'> <input id='CG' type='checkbox' autocomplete='off'> CG </label> <label class='btn btn-primary'> <input id='SHO' type='checkbox' autocomplete='off'> SHO </label> <label class='btn btn-primary'> <input id='SV' type='checkbox' autocomplete='off' > SV </label> <label class='btn btn-primary'> <input id='IPOuts' type='checkbox' autocomplete='off'> IPOuts </label> <label class='btn btn-primary'> <input id='H' type='checkbox' autocomplete='off'> H </label> <label class='btn btn-primary'> <input id='ER' type='checkbox' autocomplete='off'> ER </label> <label class='btn btn-primary'> <input id='BB' type='checkbox' autocomplete='off'> BB </label> <label class='btn btn-primary'> <input id='IBB' type='checkbox' autocomplete='off'> IBB </label> <br> <label class='btn btn-primary'> <input id='WP' type='checkbox' autocomplete='off'> WP </label> <label class='btn btn-primary'> <input id='HBP' type='checkbox' autocomplete='off'> HBP </label> <label class='btn btn-primary'> <input id='BK' type='checkbox' autocomplete='off'> BK </label> <label class='btn btn-primary'> <input id='BFP' type='checkbox' autocomplete='off'> BFP </label> <label class='btn btn-primary'> <input id='GF' type='checkbox' autocomplete='off'> GF </label> <label class='btn btn-primary'> <input id='R' type='checkbox' autocomplete='off'> R </label> <label class='btn btn-primary'> <input id='SH' type='checkbox' autocomplete='off'> SH </label> <label class='btn btn-primary'> <input id='SF' type='checkbox' autocomplete='off'> SF </label> <label class='btn btn-primary'> <input id='GIDP' type='checkbox' autocomplete='off'> GIDP </label> </div> </div>"
-//batterStats = "<div id='batterStats'> <div class='btn-group' data-toggle='buttons'> <label class='btn btn-primary active'> <input id='Gb' type='checkbox' autocomplete='off' checked> G </label> <label class='btn btn-primary active'> <input id='ABb' type='checkbox' autocomplete='off' checked> AB </label> <label class='btn btn-primary active'> <input id='Rb' type='checkbox' autocomplete='off' checked> R </label> <label class='btn btn-primary active'> <input id='Hb' type='checkbox' autocomplete='off' checked> H </label> <label class='btn btn-primary active'> <input id='Double' type='checkbox' autocomplete='off' checked> 2B </label> <label class='btn btn-primary active'> <input id='Triple' type='checkbox' autocomplete='off' checked> 3B </label> <label class='btn btn-primary'> <input id='HRb' type='checkbox' autocomplete='off' > HR </label> <label class='btn btn-primary'> <input id='RBIb' type='checkbox' autocomplete='off' > RBI </label> <br> <label class='btn btn-primary'> <input id='SBb' type='checkbox' autocomplete='off'> SB </label> <label class='btn btn-primary'> <input id='CSb' type='checkbox' autocomplete='off'> CS </label> <label class='btn btn-primary'> <input id='BBb' type='checkbox' autocomplete='off' > BB </label> <label class='btn btn-primary'> <input id='SOb' type='checkbox' autocomplete='off'> SO </label> <label class='btn btn-primary'> <input id='IBBb' type='checkbox' autocomplete='off'> IBB </label> <label class='btn btn-primary'> <input id='HBPb' type='checkbox' autocomplete='off'> HBP </label> <label class='btn btn-primary'> <input id='SFb' type='checkbox' autocomplete='off'> SF </label> <label class='btn btn-primary'> <input id='SHb' type='checkbox' autocomplete='off'> SH </label> <label class='btn btn-primary'> <input id='GIDPb' type='checkbox' autocomplete='off'> GIDP </label> </div> </div>";
 
 
 /*stint, teamID, lgID, W, L, G, GS, CG, SHO, SV, IPouts, H, ER, HR, BB, SO, BAOpp, ERA, IBB, WP, HBP, BK, BFP, GF, R, SH, SF, GIDP
