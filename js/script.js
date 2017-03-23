@@ -86,14 +86,15 @@ $(document).ready(function(){
         $('#batFilter').toggle()
     });
     $("#submit").click(function(){
-        var $output = $('#output');
-        $("#pitchFilter").hide();
-        $("#batFilter").hide();
         var $pitch = $("#pitch");
         $pitch.empty();
-
         var $bat = $("#bat");
         $bat.empty();
+
+        $output = $('#output');
+        $("#pitchFilter").hide();
+        $("#batFilter").hide();
+
 
         var pitchHeader = "";
         for(var i = 0; i < pitcherStatsArray.length; i++){
@@ -115,16 +116,18 @@ $(document).ready(function(){
 
         $pitch.append(pitchDisplay);
         $bat.append(batDisplay);
-        $pitch.append("<div class='loader'></div>");
-        $bat.append("<div class='loader'></div>");
+        //$pitch.append("<div class='loader'></div>");
+        //$bat.append("<div class='loader'></div>");
+        $(".loader").show();
 
-        $output.toggle();
+        $output.show();
         $.getJSON("Database/master.json", function(result){
             //iterate over items in master
             $.each(result, function (key, value) {
                 //if last name matches
                 if ($("#name").val() == (value.nameLast + ", " + value.NameFirst)) {
-                    $output.prepend(value.NameFirst + " " + value.nameLast);
+                    //console.log(value.NameFirst + " " + value.nameLast);
+                    $("#nameSpace").html(value.NameFirst + " " + value.nameLast);
                     //iterate over items in pitching
                     $.getJSON("Database/pitching.json", function(pResult) {
                         $.each(pResult, function (pKey, pValue) {
@@ -207,19 +210,42 @@ $(document).ready(function(){
                         $.each(bResult, function (bKey, bValue) {
                             if(value.playerID == bValue.playerID) {
                                 var batterBody = ("<td>" + bValue.yearID + "</td><td>" + bValue.teamID + "</td>");
+                                //console.log(batterStatsArray.length);
+                                //console.log(batterStatsArray[17]);
+                                //console.log(batterArray2[17]);
                                 for(var m = 0; m < batterStatsArray.length; m++){
                                     if(batterStatsArray[m]){
                                         var holder = batterArray2[m];
-                                        //console.log("current stat: " + holder);
-                                        var counter = [];
-                                        for(var w = 0; w < bResult.length; w++){
-                                            if (bResult[w].yearID == bValue.yearID) {
-                                                counter.push(Number((bResult[w])[holder]));
-                                                counter.sort(function (a, b) {
-                                                    return (a - b)
-                                                });
+                                        if(m==17){
+                                            //console.log("current stat: BA / " + holder);
+                                            var counter = [];
+                                            for(var w = 0; w < bResult.length; w++){
+                                                if (bResult[w].yearID == bValue.yearID) {
+                                                    counter.push((Math.round(((bResult[w].H)/(bResult[w].AB)) * 1000) / 1000));
+                                                    //counter.push(Math.round(    (   ((Number((bResult[w])["H"])) / (Number((bResult[w])["AB"]) )) * 1000) / 1000));
+                                                    //(Math.round(((bValue.H)/(bValue.AB)) * 1000) / 1000)
+                                                    counter.sort(function (a, b) {
+                                                        return (a - b)
+                                                    });
+                                                }
+                                            }
+                                            //console.log(counter);
+                                        }
+                                        else{
+                                            //console.log("current stat: " + holder);
+                                            counter = [];
+                                            for(var x = 0; x < bResult.length; x++){
+                                                if (bResult[x].yearID == bValue.yearID) {
+                                                    counter.push(Number((bResult[x])[holder]));
+                                                    counter.sort(function (a, b) {
+                                                        return (a - b)
+                                                    });
+                                                }
                                             }
                                         }
+
+
+
 
 
                                         if(holder == "CS" || holder =="SO"){
@@ -240,7 +266,29 @@ $(document).ready(function(){
                                             }
                                         }
                                         else if(holder == "BA"){
-                                            batterBody += ("<td>" + (Math.round(((bValue.H)/(bValue.AB)) * 1000) / 1000) + "</td>");
+                                            var thisBatterBA = (Math.round(((bValue.H)/(bValue.AB)) * 1000) / 1000);
+                                            if(Number.isNaN(thisBatterBA)){
+                                                batterBody += ("<td></td>");
+                                            }
+                                            else{
+                                                if(thisBatterBA >= counter[counter.length - 2]) {
+                                                    //console.log("player number 1 " + "player value: " + thisBatterBA + " Number 1: "+ counter[counter.length - 1]);
+                                                    batterBody += ("<td class='highlightRed'>" + thisBatterBA + "</td>");
+                                                }
+                                                else if(thisBatterBA > counter[Math.round(0.95*(counter.length))]) {
+                                                    //console.log("player above 95th percentile " + "player value: " + bValue[holder] + " 95th percentile: "+counter[Math.round(0.95*(counter.length))]);
+                                                    batterBody += ("<td class='highlightOrange'>" + thisBatterBA + "</td>");
+                                                }
+                                                else if(thisBatterBA > counter[Math.round(0.9*(counter.length))]) {
+                                                    //console.log("player above 90th percentile " + "player value: " + bValue[holder] + " 90th percentile: "+counter[Math.round(0.9*(counter.length))]);
+                                                    batterBody += ("<td class='highlightYellow'>" + thisBatterBA + "</td>");
+                                                }
+                                                else {
+                                                    batterBody += ("<td>" + thisBatterBA + "</td>");
+                                                }
+                                            }
+
+                                            //batterBody += ("<td>" + (Math.round(((bValue.H)/(bValue.AB)) * 1000) / 1000) + "</td>");
                                         }
                                         else{
                                             if(bValue[holder] == counter[counter.length - 1]) {
@@ -252,8 +300,8 @@ $(document).ready(function(){
                                                 batterBody += ("<td class='highlightOrange'>" + bValue[holder] + "</td>");
                                             }
                                             else if(bValue[holder] > counter[Math.round(0.9*(counter.length))]) {
-                                                //console.log("player above 90th percentile");
-                                                batterBody += ("<td class='highlight'>" + bValue[holder] + "</td>");
+                                                //console.log("player above 90th percentile " + "player value: " + bValue[holder] + " 90th percentile: "+counter[Math.round(0.9*(counter.length))]);
+                                                batterBody += ("<td class='highlightYellow'>" + bValue[holder] + "</td>");
                                             }
                                             else {
                                                 batterBody += ("<td>" + bValue[holder] + "</td>");
@@ -266,12 +314,25 @@ $(document).ready(function(){
                                 $bat.append(batRow);
                                 //(Math.round(((bValue.H)/(bValue.AB))
                             }
+                        })
+
+                    })
+                        .fail(function(){
+                            $output.append("Sorry, your input " + ("#name").val() + " did not return any results");
+
+                        })
+                        .done(function(){
+                            $("#name").val("");
+                            $(".loader").hide()
                         });
-                    });
-                    $(".loader").hide()
+
+                    //$(".loader").hide()
                 }
+
             });
+
         });
+        //$("#name").val("");
 
     });
 
